@@ -2,5 +2,7 @@
 
 [] - Criar entidades usuarios 
 [] - gerar JWT /
-[] - controller /rota de cadastro user /create
+[X] - controller User
+    []- Create
+    []- List
 [] - controller /rota de Auth
