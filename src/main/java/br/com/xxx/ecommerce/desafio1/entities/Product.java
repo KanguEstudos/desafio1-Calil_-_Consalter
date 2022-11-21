@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "products")
-public class Products {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,5 +26,5 @@ public class Products {
 
     @ManyToOne
     @JoinColumn(name = "categoryId")
-    private Categories category;
+    private Category category;
 }
