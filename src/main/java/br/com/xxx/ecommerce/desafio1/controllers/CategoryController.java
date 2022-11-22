@@ -2,6 +2,7 @@ package br.com.xxx.ecommerce.desafio1.controllers;
 
 import br.com.xxx.ecommerce.desafio1.entities.Category;
 import br.com.xxx.ecommerce.desafio1.repositories.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @RequestMapping(value="/v1/category")
 public class CategoryController {
 
+    @Autowired
     private CategoryRepository repository;
 
 

@@ -17,10 +17,10 @@ public class User {
     private Long id;
 
     @Column(columnDefinition = "varchar(100) not null")
-    private String nome;
+    private String name;
 
-    @Column(columnDefinition = "varchar(100) not null")
-    private Double cpf;
+    @Column(columnDefinition = "varchar(15) not null")
+    private String cpf;
 
     @Column(columnDefinition = "varchar(255) not null")
     private String email;

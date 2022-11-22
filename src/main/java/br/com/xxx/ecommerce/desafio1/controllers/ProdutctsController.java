@@ -2,6 +2,7 @@ package br.com.xxx.ecommerce.desafio1.controllers;
 
 import br.com.xxx.ecommerce.desafio1.entities.Product;
 import br.com.xxx.ecommerce.desafio1.repositories.ProductsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @RequestMapping(value="/v1/products")
 public class ProdutctsController {
 
+    @Autowired
     private ProductsRepository repository;
     @PostMapping("/save")
     public Product insert(@RequestBody Product category) {
@@ -23,9 +25,9 @@ public class ProdutctsController {
         return result;
     }
 
-    @GetMapping(value = "/list/{name}")
-    public List<Product> findByName(@PathVariable String name) {
-        return repository.findByName(name);
+    @GetMapping(value = "/list/{title}")
+    public List<Product> findByName(@PathVariable String title) {
+        return repository.findByTitle(title);
     }
 
     @PutMapping(value = "/update/{id}")

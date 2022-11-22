@@ -2,6 +2,7 @@ package br.com.xxx.ecommerce.desafio1.controllers;
 
 import br.com.xxx.ecommerce.desafio1.entities.User;
 import br.com.xxx.ecommerce.desafio1.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,6 +11,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value="/v1/user")
 public class UserController {
+
+    @Autowired
     private UserRepository repository;
 
     @GetMapping
@@ -32,7 +35,7 @@ public class UserController {
     public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
         return repository.findById(id).map(
                 map -> {
-                    map.setNome(user.getNome());
+                    map.setName(user.getName());
                     User saved = repository.save(user);
                     return ResponseEntity.ok().body(saved);
                 }
