@@ -2,10 +2,7 @@ package br.com.xxx.ecommerce.desafio1.controllers;
 
 import br.com.xxx.ecommerce.desafio1.entities.Category;
 import br.com.xxx.ecommerce.desafio1.repositories.CategoryRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,8 +19,12 @@ public class CategoryController {
         return result;
     }
     @PostMapping("/save")
-    public List<Category> save(){
-        List<Category> result = repository.save();
-        return result;
+    public Category insert(@RequestBody Category category) {
+        return repository.save(category);
+    }
+
+    @GetMapping(value = "/list/{name}")
+    public List<Category> findByName(@PathVariable String name) {
+        return repository.findByName(name);
     }
 }
