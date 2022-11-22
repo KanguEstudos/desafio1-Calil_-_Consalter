@@ -2,6 +2,7 @@ package br.com.xxx.ecommerce.desafio1.controllers;
 
 import br.com.xxx.ecommerce.desafio1.entities.Category;
 import br.com.xxx.ecommerce.desafio1.repositories.CategoryRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,5 +27,15 @@ public class CategoryController {
     @GetMapping(value = "/list/{name}")
     public List<Category> findByName(@PathVariable String name) {
         return repository.findByName(name);
+    }
+    @PutMapping(value = "/update/{id}")
+    public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody Category category) {
+        return repository.findById(id).map(
+                map -> {
+                    map.setName(category.getName());
+                    Category saved = repository.save(category);
+                    return ResponseEntity.ok().body(saved);
+                }
+        ).orElse(ResponseEntity.notFound().build());
     }
 }

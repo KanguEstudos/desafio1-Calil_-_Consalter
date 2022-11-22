@@ -7,9 +7,9 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Data
-@Entity
 @Getter
 @Setter
+@Entity
 @Table(name = "categories")
 public class Category {
     @Id
@@ -18,4 +18,5 @@ public class Category {
 
     @Column(columnDefinition = "varchar(50) not null")
     private String name;
+
 }

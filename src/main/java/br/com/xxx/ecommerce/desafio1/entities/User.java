@@ -6,10 +6,10 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Getter
-@Setter
 @Data
 @Entity
+@Getter
+@Setter
 @Table(name = "Users")
 public class User {
     @Id
@@ -27,5 +27,6 @@ public class User {
 
     @Column(columnDefinition = "varchar(255) not null")
     private String password;
+
 
 }
