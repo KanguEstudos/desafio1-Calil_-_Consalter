@@ -15,7 +15,7 @@ public class UserController {
     @Autowired
     private UserRepository repository;
 
-    @GetMapping
+    @GetMapping("/list")
     public List<User> findAll(){
         List<User> result = repository.findAll();
         return result;
@@ -28,7 +28,7 @@ public class UserController {
 
     @GetMapping(value = "/list/{name}")
     public List<User> findByName(@PathVariable String name) {
-        return repository.findByName(name);
+        return repository.findByNameContainingIgnoreCase(name);
     }
 
     @PutMapping(value = "/update/{id}")

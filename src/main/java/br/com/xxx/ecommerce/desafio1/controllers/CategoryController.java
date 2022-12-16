@@ -28,14 +28,14 @@ public class CategoryController {
 
     @GetMapping(value = "/list/{name}")
     public List<Category> findByName(@PathVariable String name) {
-        return repository.findByName(name);
+        return repository.findByNameContainingIgnoreCase(name);
     }
     @PutMapping(value = "/update/{id}")
     public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody Category category) {
         return repository.findById(id).map(
                 map -> {
                     map.setName(category.getName());
-                    Category saved = repository.save(category);
+                    Category saved = repository.save(map);
                     return ResponseEntity.ok().body(saved);
                 }
         ).orElse(ResponseEntity.notFound().build());
