@@ -33,9 +33,9 @@ public class ProdutctsController {
     @PutMapping(value = "/update/{id}")
     public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody Product product) {
         return repository.findById(id).map(
-                map -> {
-                    map.setTitle(product.getTitle());
-                    Product saved = repository.save(map);
+                data -> {
+                    data.setTitle(product.getTitle());
+                    Product saved = repository.save(data);
                     return ResponseEntity.ok().body(saved);
                 }
         ).orElse(ResponseEntity.notFound().build());

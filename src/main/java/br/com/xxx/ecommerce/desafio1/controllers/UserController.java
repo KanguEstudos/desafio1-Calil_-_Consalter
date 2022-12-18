@@ -1,11 +1,16 @@
 package br.com.xxx.ecommerce.desafio1.controllers;
 
+import br.com.xxx.ecommerce.desafio1.emailvalidation.EmailValidationDTO;
 import br.com.xxx.ecommerce.desafio1.entities.User;
 import br.com.xxx.ecommerce.desafio1.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -22,8 +27,29 @@ public class UserController {
     }
 
     @PostMapping("/save")
-    public User insert(@RequestBody User user) {
-        return repository.save(user);
+    public ResponseEntity<User> insert(@RequestBody User user) {
+        repository.findByCpf(user.getCpf())
+            .ifPresent((u) -> {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Usuário já existente para esse CPF");
+            });
+
+        String url = "https://emailvalidation.abstractapi.com/v1/?api_key=";
+        String apiKey = "04161c12636041748527be218a21e399";
+        String urlFull = url + apiKey + "&email=" + user.getEmail();
+
+        RestTemplate restTemplate = new RestTemplate();
+        EmailValidationDTO emailValidationDTO = restTemplate.getForObject(urlFull, EmailValidationDTO.class);
+
+        System.out.println(emailValidationDTO);
+
+        if (
+            emailValidationDTO.getIs_valid_format().isValue() &&
+            emailValidationDTO.getIs_smtp_valid().isValue()
+        ) {
+            return new ResponseEntity<>(repository.save(user), HttpStatus.CREATED);
+        }
+
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail inválido");
     }
 
     @GetMapping(value = "/list/{name}")
@@ -34,9 +60,12 @@ public class UserController {
     @PutMapping(value = "/update/{id}")
     public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
         return repository.findById(id).map(
-                map -> {
-                    map.setName(user.getName());
-                    User saved = repository.save(user);
+                data -> {
+                    data.setName(user.getName());
+                    data.setCpf(user.getCpf());
+                    data.setEmail(user.getEmail());
+                    data.setPassword(user.getPassword());
+                    User saved = repository.save(data);
                     return ResponseEntity.ok().body(saved);
                 }
         ).orElse(ResponseEntity.notFound().build());

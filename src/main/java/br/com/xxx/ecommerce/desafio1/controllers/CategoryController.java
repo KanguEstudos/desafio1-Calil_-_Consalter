@@ -15,7 +15,6 @@ public class CategoryController {
     @Autowired
     private CategoryRepository repository;
 
-
     @GetMapping("/list")
     public List<Category> findAll(){
         List<Category> result = repository.findAll();
@@ -33,9 +32,9 @@ public class CategoryController {
     @PutMapping(value = "/update/{id}")
     public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody Category category) {
         return repository.findById(id).map(
-                map -> {
-                    map.setName(category.getName());
-                    Category saved = repository.save(map);
+                data -> {
+                    data.setName(category.getName());
+                    Category saved = repository.save(data);
                     return ResponseEntity.ok().body(saved);
                 }
         ).orElse(ResponseEntity.notFound().build());
