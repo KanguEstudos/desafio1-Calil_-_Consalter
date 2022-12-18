@@ -35,7 +35,7 @@ public class ProdutctsController {
         return repository.findById(id).map(
                 map -> {
                     map.setTitle(product.getTitle());
-                    Product saved = repository.save(product);
+                    Product saved = repository.save(map);
                     return ResponseEntity.ok().body(saved);
                 }
         ).orElse(ResponseEntity.notFound().build());

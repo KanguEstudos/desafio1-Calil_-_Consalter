@@ -36,7 +36,7 @@ public class UserController {
         return repository.findById(id).map(
                 map -> {
                     map.setName(user.getName());
-                    User saved = repository.save(user);
+                    User saved = repository.save(map);
                     return ResponseEntity.ok().body(saved);
                 }
         ).orElse(ResponseEntity.notFound().build());
