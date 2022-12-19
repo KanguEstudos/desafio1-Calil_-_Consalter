@@ -1,15 +1,18 @@
 package br.com.xxx.ecommerce.desafio1.controllers;
 
 import br.com.xxx.ecommerce.desafio1.dtos.EmailDTO;
+import br.com.xxx.ecommerce.desafio1.enums.StatusEmail;
 import br.com.xxx.ecommerce.desafio1.models.EmailModel;
 import br.com.xxx.ecommerce.desafio1.returns.GenericReturn;
 import br.com.xxx.ecommerce.desafio1.entities.User;
 import br.com.xxx.ecommerce.desafio1.repositories.UserRepository;
 import br.com.xxx.ecommerce.desafio1.returns.Token;
 import br.com.xxx.ecommerce.desafio1.services.EmailService;
+import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,10 +35,16 @@ public class AuthController {
             "7f-j&CKk=coNzZc0y7_4obMP?#TfcYq%fcD0mDpenW2nc!lfGoZ|d?f&RNbDHUX6"
                     .getBytes(StandardCharsets.UTF_8));
 
+    private final AmqpTemplate queuePublisher;
+
     @Autowired
     EmailService emailService;
     @Autowired
     private UserRepository repository;
+
+    public AuthController(AmqpTemplate queuePublisher) {
+        this.queuePublisher = queuePublisher;
+    }
 
     @PostMapping("/forgot-password")
     public ResponseEntity<GenericReturn> show(@RequestBody User user) {
@@ -46,28 +55,38 @@ public class AuthController {
 
         boolean status = false;
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-        String message = "E-mail não cadastrado";
+        String message = "E-mail não encontrado";
 
         if (data.isPresent()) {
-//            EmailDTO = emailDTO;
+            EmailDTO emailDTO = new EmailDTO();
 
+            String url = String.format("http://localhost/reset-password/%s", token);
+            String text = String.format(
+                "Clique <a href='%s'>Aqui</a> para alterar sua senha",
+                url
+            );
 
+            emailDTO.setOwnerRef("Geovanne K.");
+            emailDTO.setEmailFrom("geovanne.k4ngu@gmail.com");
+            emailDTO.setSubject("Alteração de senha");
+            emailDTO.setText(text);
+            emailDTO.setEmailTo(user.getEmail());
 
-//            EmailModel emailModel = new EmailModel();
-//            BeanUtils.copyProperties(emailDTO, emailModel);
+            EmailModel emailModel = new EmailModel();
+            BeanUtils.copyProperties(emailDTO, emailModel);
 
-//        String routingkey = "kangu.ms";
-//        rabbitTemplate.convertAndSend(routingkey, emailModel);
-//            emailService.sendEmail(emailModel);
+            var send = emailService.sendEmail(emailModel);
 
-            if (1 == 1) {
-                status = true;
-                httpStatus = HttpStatus.OK;
-                message = "Verificação concluída! Um e-mail foi enviado para alteração de senha";
-            } else {
-                httpStatus = HttpStatus.BAD_REQUEST;
-                message = "Erro ao enviar e-mail";
-            }
+            System.out.println(send.getText());
+
+            Gson gson = new Gson();
+            String json = gson.toJson(emailDTO);
+
+            queuePublisher.convertAndSend("emails", "routing-key-emails", json);
+
+            status = true;
+            message = "Verificação concluída! Um e-mail será enviado para alteração de senha";
+            httpStatus = HttpStatus.OK;
         }
 
         dataReturn.setStatus(status);

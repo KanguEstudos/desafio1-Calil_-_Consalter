@@ -1,5 +1,8 @@
 package br.com.xxx.ecommerce.desafio1.configs;
 
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -18,6 +21,16 @@ public class RabbitMQConfig {
     @Bean
     public Queue queue() {
         return new Queue(queue, true);
+    }
+
+    @Bean
+    DirectExchange exchange() {
+        return new DirectExchange("direct-exchange");
+    }
+
+    @Bean
+    Binding testeBinding(Queue emailQueue, DirectExchange exchange) {
+        return BindingBuilder.bind(emailQueue).to(exchange).with("routing-key-emails");
     }
 
     /*@Bean
