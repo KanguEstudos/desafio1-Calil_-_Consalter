@@ -1,4 +1,4 @@
-package br.com.xxx.ecommerce.desafio1.emailvalidation;
+package br.com.xxx.ecommerce.desafio1.dtos;
 
 import lombok.Data;
 

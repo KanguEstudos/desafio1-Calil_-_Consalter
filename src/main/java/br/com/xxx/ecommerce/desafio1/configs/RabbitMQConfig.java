@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-/*
     @Value("${spring.rabbitmq.queue}")
     private String queue;
 
@@ -21,7 +20,7 @@ public class RabbitMQConfig {
         return new Queue(queue, true);
     }
 
-    @Bean
+    /*@Bean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
         return new RabbitAdmin(connectionFactory);
     }
@@ -29,11 +28,11 @@ public class RabbitMQConfig {
     @Bean
     public ApplicationListener<ApplicationReadyEvent> applicationReadyEventApplicationListener (RabbitAdmin rabbitAdmin){
         return event -> rabbitAdmin.initialize();
-    }
+    }*/
 
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
-    }*/
+    }
 
 }
